@@ -1,5 +1,5 @@
 data "template_cloudinit_config" "k8_members_config" {
-  gzip = true
+  gzip          = true
   base64_encode = true
   part {
     content_type = "text/cloud-config"
@@ -14,7 +14,7 @@ resource "openstack_compute_instance_v2" "masters" {
   flavor_id       = var.masters_flavor_id
   key_pair        = var.keypair_name
   security_groups = var.masters_security_groups
-  user_data = data.template_cloudinit_config.k8_members_config.rendered
+  user_data       = data.template_cloudinit_config.k8_members_config.rendered
 
   network {
     name = var.network_name
@@ -28,7 +28,7 @@ resource "openstack_compute_instance_v2" "workers" {
   flavor_id       = var.workers_flavor_id
   key_pair        = var.keypair_name
   security_groups = var.workers_security_groups
-  user_data = data.template_cloudinit_config.k8_members_config.rendered
+  user_data       = data.template_cloudinit_config.k8_members_config.rendered
 
   network {
     name = var.network_name
@@ -36,7 +36,7 @@ resource "openstack_compute_instance_v2" "workers" {
 }
 
 data "template_cloudinit_config" "load_balancer_config" {
-  gzip = true
+  gzip          = true
   base64_encode = true
   part {
     content_type = "text/cloud-config"
