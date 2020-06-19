@@ -1,0 +1,44 @@
+#cloud-config
+#Based on: https://github.com/Magnitus-/server-setup-scripts/tree/a9c57f80f5c04981256f4196f416c2d658af1c5d/roles/kubernetes/load_balancer
+write_files:
+  - path: /opt/haproxy/haproxy.cfg
+    owner: root:root
+    permissions: "0444"
+    content: |
+      global
+        #Disable ssl cert validation for availability health checks
+        #Here, Haproxy is used at the transport layer so clients are expected to do cert validation separately
+        ssl-server-verify none
+
+      defaults
+        mode tcp
+        timeout connect 3000ms
+        timeout client 3000ms
+        timeout server 3000ms
+
+      backend k8_api_servers
+        balance roundrobin
+        option tcp-check
+        tcp-check connect ssl
+        default-server inter 1000ms rise 1 fall 1
+        %{ for ip in master_ips ~}
+        server master_${ip} ${ip}:6443 check
+        %{ endfor ~}
+
+      frontend k8_api
+        bind *:6443
+        mode tcp
+        default_backend k8_api_servers
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg-agent
+  - software-properties-common
+runcmd:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+  - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io
+  - systemctl enable docker
+  - docker run -d --restart=always --name=k8_masters_load_balancer --network=host -v /opt/haproxy:/usr/local/etc/haproxy:ro haproxy:2.1
