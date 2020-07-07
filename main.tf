@@ -47,7 +47,7 @@ data "template_cloudinit_config" "load_balancer_config" {
 }
 
 resource "openstack_compute_instance_v2" "load_balancer" {
-  count           = var.masters_count > 1 ? 1 : 0
+  count           = var.load_balancer_flavor_id != "" ? 1 : 0
   name            = var.namespace == "" ? "k8-masters-lb" : "k8-masters-lb-{var.namespace}"
   image_id        = var.image_id
   flavor_id       = var.load_balancer_flavor_id
