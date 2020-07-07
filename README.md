@@ -11,13 +11,13 @@ This includes the masters, the workers and potentially a load balancer (a node w
 The module takes the following variables as input:
 
 - namespace: A string to namespace all the vm names (ie, `<vm name>-<namespace>`). If this variable is omitted, a namespace suffix will not be added.
-- masters_count: The number of masters to provision. If greater than 1, a load balancer will also be provisioned.
+- masters_count: The number of masters to provision.
 - masters_flavor_id: The id of the flavor the masters will have.
 - masters_security_groups: List of security groups to assign to the masters. Defaults to `["default"]`
 - workers_count: The number of workers to provision.
 - workers_flavor_id: The id of the flavor the workers will have.
 - workers_security_groups: List of security groups to assign to the workers. Defaults to `["default"]`
-- load_balancer_flavor_id: The id of the flavor the load balancer will have.
+- load_balancer_flavor_id: The id of the flavor the load balancer will have. If you do not wish to provision a load balancer, leave this value at its blank default.
 - load_balancer_security_groups: List of security groups to assign to the load balancer. Defaults to `["default"]`
 - image_id: ID of the image to use to provision all vms
 - network_name: Name of the network to connect all vms to
@@ -40,7 +40,7 @@ The module outputs the following variables as output:
   ip: <ip address of the master>
 }
 ```
-- load_balancer: id and ip of the load balancer taking the following format:
+- load_balancer: id and ip of the load balancer taking the following format (if a load balancer is not provisioned, the values will be the empty string):
 ```
 {
   id: <id of the master>

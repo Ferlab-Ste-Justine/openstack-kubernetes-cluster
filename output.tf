@@ -19,7 +19,7 @@ output "workers" {
 
 output "load_balancer" {
     value = {
-      id = openstack_compute_instance_v2.load_balancer.0.id
-      ip = openstack_compute_instance_v2.load_balancer.0.network.0.fixed_ip_v4
+      id = var.load_balancer_flavor_id != "" ? openstack_compute_instance_v2.load_balancer.0.id : ""
+      ip = var.load_balancer_flavor_id != "" ? openstack_compute_instance_v2.load_balancer.0.network.0.fixed_ip_v4 : ""
     }
 }

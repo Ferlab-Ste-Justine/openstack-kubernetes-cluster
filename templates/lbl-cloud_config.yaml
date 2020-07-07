@@ -17,9 +17,9 @@ write_files:
 
       defaults
         mode tcp
-        timeout connect 3000ms
-        timeout client 3000ms
-        timeout server 3000ms
+        timeout connect 5000ms
+        timeout client 5000ms
+        timeout server 5000ms
 
       backend k8_api_servers
         balance roundrobin

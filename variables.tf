@@ -39,8 +39,9 @@ variable "workers_security_groups" {
 }
 
 variable "load_balancer_flavor_id" {
-  description = "ID of the VM flavor of the load balancer sitting in front of the masters"
+  description = "ID of the VM flavor of the load balancer sitting in front of the masters. If set to the empty string, a load balancer will not be provisioned."
   type = string
+  default = ""
 }
 
 variable "load_balancer_security_groups" {
