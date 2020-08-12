@@ -9,7 +9,7 @@ data "template_cloudinit_config" "k8_members_config" {
 
 resource "openstack_compute_instance_v2" "masters" {
   count           = var.masters_count
-  name            = var.namespace == "" ? "k8-master-${count.index + 1}" : "k8-master-${count.index + 1}-{var.namespace}"
+  name            = var.namespace == "" ? "k8-master-${count.index + 1}" : "k8-master-${count.index + 1}-${var.namespace}"
   image_id        = var.image_id
   flavor_id       = var.masters_flavor_id
   key_pair        = var.keypair_name
@@ -23,7 +23,7 @@ resource "openstack_compute_instance_v2" "masters" {
 
 resource "openstack_compute_instance_v2" "workers" {
   count           = var.workers_count
-  name            = var.namespace == "" ? "k8-worker-${count.index + 1}" : "k8-worker-${count.index + 1}-{var.namespace}"
+  name            = var.namespace == "" ? "k8-worker-${count.index + 1}" : "k8-worker-${count.index + 1}-${var.namespace}"
   image_id        = var.image_id
   flavor_id       = var.workers_flavor_id
   key_pair        = var.keypair_name
@@ -48,7 +48,7 @@ data "template_cloudinit_config" "load_balancer_config" {
 
 resource "openstack_compute_instance_v2" "load_balancer" {
   count           = var.load_balancer_flavor_id != "" ? 1 : 0
-  name            = var.namespace == "" ? "k8-masters-lb" : "k8-masters-lb-{var.namespace}"
+  name            = var.namespace == "" ? "k8-masters-lb" : "k8-masters-lb-${var.namespace}"
   image_id        = var.image_id
   flavor_id       = var.load_balancer_flavor_id
   key_pair        = var.keypair_name
