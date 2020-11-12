@@ -64,3 +64,9 @@ variable "keypair_name" {
   description = "Name of the keypair that will be used to ssh to the vms"
   type = string
 }
+
+variable "k8_annotation" {
+  description = "Annotation (usually version number) to place at the start of vm names after k8. Can be omitted."
+  type = string
+  default = ""
+}
