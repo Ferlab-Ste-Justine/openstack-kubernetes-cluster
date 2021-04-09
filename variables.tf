@@ -15,10 +15,10 @@ variable "masters_flavor_id" {
   type = string
 }
 
-variable "masters_security_groups" {
-  description = "Security groups of the master nodes"
+variable "masters_extra_security_group_ids" {
+  description = "Extra security groups of the master nodes"
   type = list(string)
-  default = ["default"]
+  default = []
 }
 
 variable "workers_count" {
@@ -32,10 +32,9 @@ variable "workers_flavor_id" {
  type = string
 }
 
-variable "workers_security_groups" {
-  description = "Security groups of the worker nodes"
+variable "workers_extra_security_group_ids" {
+  description = "Extra security groups of the worker nodes"
   type = list(string)
-  default = ["default"]
 }
 
 variable "load_balancer_flavor_id" {
@@ -44,19 +43,13 @@ variable "load_balancer_flavor_id" {
   default = ""
 }
 
-variable "load_balancer_security_groups" {
-  description = "Security groups of the load balancer sitting in front of the masters"
-  type = list(string)
-  default = ["default"]
-}
-
 variable "image_id" {
     description = "Image id of the VMs"
     type = string
 }
 
-variable "network_name" {
-  description = "Name of the network the cluster will be in"
+variable "network_id" {
+  description = "id of the network the cluster will be in"
   type = string
 }
 
@@ -65,8 +58,78 @@ variable "keypair_name" {
   type = string
 }
 
-variable "k8_annotation" {
-  description = "Annotation (usually version number) to place at the start of vm names after k8. Can be omitted."
+variable "k8_max_workers_count" {
+  description = "Maximum expected number of k8 workers"
+  type = number
+  default = 100
+}
+
+variable "k8_max_masters_count" {
+  description = "Maximum expected number of k8 masters"
+  type = number
+  default = 7
+}
+
+variable "nameserver_ips" {
+  description = "Ips of the nameservers the load balance will use to resolve k8 masters and workers"
+  type = list(string)
+}
+
+variable "internal_k8_domain" {
+  description = "Domain that will resolve to the k8 masters and workers on the dns servers"
   type = string
-  default = ""
+}
+
+variable "masters_api_timeout" {
+  description = "Amount of time an api connection can remain idle before it times out"
+  type = string
+  default = "5000ms"
+}
+
+variable "masters_api_port" {
+  description = "Http port of the api on the k8 masters"
+  type = number
+  default = 6443
+}
+
+variable "masters_max_api_connections" {
+  description = "Max number of concurrent api connections on the masters"
+  type = number
+  default = 200
+}
+
+variable "workers_ingress_http_timeout" {
+  description = "Amount of time an ingress http connection can remain idle before it times out"
+  type = string
+  default = "5000ms"
+}
+
+variable "workers_ingress_http_port" {
+  description = "Http port of the ingress on the k8 workers"
+  type = number
+  default = 30000
+}
+
+variable "workers_ingress_max_http_connections" {
+  description = "Max number of concurrent http connections the load balancer will allow on the workers"
+  type = number
+  default = 200
+}
+
+variable "workers_ingress_https_timeout" {
+  description = "Amount of time an ingress https connection can remain idle before it times out"
+  type = string
+  default = "5000ms"
+}
+
+variable "workers_ingress_https_port" {
+  description = "Https port of the ingress on the k8 workers"
+  type = number
+  default = 30001
+}
+
+variable "workers_ingress_max_https_connections" {
+  description = "Max number of concurrent https connections the load balancer will allow on the workers"
+  type = number
+  default = 200
 }

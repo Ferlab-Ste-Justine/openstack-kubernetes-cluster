@@ -22,7 +22,6 @@ The module takes the following variables as input:
 - image_id: ID of the image to use to provision all vms
 - network_name: Name of the network to connect all vms to
 - keypair_name: Name of the keypair that will be used to ssh on the vms
-- k8_annotation: Annotation to add to vm names after the k8 (ie, `k8-<annotation>-...`). Useful if you want to add a specific kubernetes version to the vm names in a clear manner. Can be omitted.
 
 ## Output
 
