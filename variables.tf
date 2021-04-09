@@ -35,6 +35,7 @@ variable "workers_flavor_id" {
 variable "workers_extra_security_group_ids" {
   description = "Extra security groups of the worker nodes"
   type = list(string)
+  default = []
 }
 
 variable "load_balancer_flavor_id" {

@@ -1,30 +1,36 @@
 resource "openstack_networking_secgroup_v2" "k8_master" {
-  name                 = "master-${var.namespace}"
+  name                 = "k8-master-${var.namespace}"
   description          = "Security group for kubernetes master"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_worker" {
-  name                 = "worker-${var.namespace}"
+  name                 = "k8-worker-${var.namespace}"
   description          = "Security group for kubernetes workers"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_load_balancer" {
-  name                 = "lb-${var.namespace}"
+  name                 = "k8-lb-${var.namespace}"
   description          = "Security group for kubernetes load balancer"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_master_client" {
-  name                 = "master-client-${var.namespace}"
+  name                 = "k8-master-client-${var.namespace}"
   description          = "Security group for direct client of kubernetes workers"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_worker_client" {
-  name                 = "worker-client-${var.namespace}"
+  name                 = "k8-worker-client-${var.namespace}"
   description          = "Security group for direct client of kubernetes masters"
+  delete_default_rules = true
+}
+
+resource "openstack_networking_secgroup_v2" "k8_bastion" {
+  name                 = "k8-bastion-${var.namespace}"
+  description          = "Security group for cluster's bastion"
   delete_default_rules = true
 }
 
@@ -94,7 +100,7 @@ resource "openstack_networking_secgroup_rule_v2" "k8_worker_master_access" {
   security_group_id = openstack_networking_secgroup_v2.k8_worker.id
 }
 
-#Allow icmp traffic from the load balancer
+#Allow icmp traffic from the load balancer and bastion
 resource "openstack_networking_secgroup_rule_v2" "k8_worker_lb_icmp_access_v4" {
   direction         = "ingress"
   ethertype         = "IPv4"
@@ -124,6 +130,38 @@ resource "openstack_networking_secgroup_rule_v2" "k8_master_lb_icmp_access_v6" {
   ethertype         = "IPv6"
   protocol          = "icmp"
   remote_group_id  = openstack_networking_secgroup_v2.k8_load_balancer.id
+  security_group_id = openstack_networking_secgroup_v2.k8_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "k8_worker_bastion_icmp_access_v4" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "icmp"
+  remote_group_id  = openstack_networking_secgroup_v2.k8_bastion.id
+  security_group_id = openstack_networking_secgroup_v2.k8_worker.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "k8_worker_bastion_icmp_access_v6" {
+  direction         = "ingress"
+  ethertype         = "IPv6"
+  protocol          = "icmp"
+  remote_group_id  = openstack_networking_secgroup_v2.k8_bastion.id
+  security_group_id = openstack_networking_secgroup_v2.k8_worker.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "k8_master_bastion_icmp_access_v4" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "icmp"
+  remote_group_id  = openstack_networking_secgroup_v2.k8_bastion.id
+  security_group_id = openstack_networking_secgroup_v2.k8_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "k8_master_bastion_icmp_access_v6" {
+  direction         = "ingress"
+  ethertype         = "IPv6"
+  protocol          = "icmp"
+  remote_group_id  = openstack_networking_secgroup_v2.k8_bastion.id
   security_group_id = openstack_networking_secgroup_v2.k8_master.id
 }
 
@@ -159,7 +197,7 @@ resource "openstack_networking_secgroup_rule_v2" "lb_ingress_https_access" {
   security_group_id = openstack_networking_secgroup_v2.k8_worker.id
 }
 
-#Allow external traffic on the load balancer
+#Allow external traffic on the load balancer for the api, ingress and icmp
 resource "openstack_networking_secgroup_rule_v2" "lb_api_external" {
   direction         = "ingress"
   ethertype         = "IPv4"
@@ -190,6 +228,22 @@ resource "openstack_networking_secgroup_rule_v2" "lb_ingress_https_external" {
   security_group_id = openstack_networking_secgroup_v2.k8_worker.id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "lb_icmp_external_v4" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "icmp"
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.k8_lb.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "lb_icmp_external_v6" {
+  direction         = "ingress"
+  ethertype         = "IPv6"
+  protocol          = "icmp"
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.k8_lb.id
+}
+
 #Allow all master inbound traffic from master clients
 resource "openstack_networking_secgroup_rule_v2" "k8_master_client_access" {
   direction         = "ingress"
@@ -204,4 +258,73 @@ resource "openstack_networking_secgroup_rule_v2" "k8_worker_client_access" {
   ethertype         = "IPv4"
   remote_group_id  = openstack_networking_secgroup_v2.k8_worker_client.id
   security_group_id = openstack_networking_secgroup_v2.k8_worker.id
+}
+
+#Allow ssh traffic from the bastion
+resource "openstack_networking_secgroup_rule_v2" "bastion_lb_ssh_access" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 22
+  port_range_max    = 22
+  remote_group_id   = openstack_networking_secgroup_v2.k8_bastion.id
+  security_group_id = openstack_networking_secgroup_v2.k8_load_balancer.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "bastion_master_ssh_access" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 22
+  port_range_max    = 22
+  remote_group_id   = openstack_networking_secgroup_v2.k8_bastion.id
+  security_group_id = openstack_networking_secgroup_v2.k8_master.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "bastion_worker_ssh_access" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 22
+  port_range_max    = 22
+  remote_group_id   = openstack_networking_secgroup_v2.k8_bastion.id
+  security_group_id = openstack_networking_secgroup_v2.k8_worker.id
+}
+
+#Allow external traffic to the bastion for ssh and icmp
+resource "openstack_networking_secgroup_rule_v2" "bastion_ssh_external" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 22
+  port_range_max    = 22
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.k8_bastion.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "bastion_icmp_external_v4" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "icmp"
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.k8_bastion.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "bastion_icmp_external_v6" {
+  direction         = "ingress"
+  ethertype         = "IPv6"
+  protocol          = "icmp"
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.k8_bastion.id
+}
+
+#Allow direct api access from the bastion
+resource "openstack_networking_secgroup_rule_v2" "bastion_master_api_access" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = var.masters_api_port
+  port_range_max    = var.masters_api_port
+  remote_group_id  = openstack_networking_secgroup_v2.k8_bastion.id
+  security_group_id = openstack_networking_secgroup_v2.k8_master.id
 }
