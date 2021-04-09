@@ -63,11 +63,14 @@ data "template_cloudinit_config" "load_balancer_config" {
               k8_ingress_http_timeout = var.workers_ingress_http_timeout
               k8_ingress_http_port = var.workers_ingress_http_port
               k8_ingress_max_http_connections = var.workers_ingress_max_http_connections
+              k8_ingress_https_timeout = var.workers_ingress_https_timeout
               k8_ingress_https_port = var.workers_ingress_https_port
               k8_ingress_max_https_connections = var.workers_ingress_max_https_connections
               k8_api_timeout = var.masters_api_timeout
               k8_api_port = var.masters_api_port
               k8_max_api_connections = var.masters_max_api_connections
+              k8_max_masters_count = var.k8_max_masters_count
+              k8_max_workers_count = var.k8_max_workers_count
             }
         )
     })

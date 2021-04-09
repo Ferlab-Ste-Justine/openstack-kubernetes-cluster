@@ -233,7 +233,7 @@ resource "openstack_networking_secgroup_rule_v2" "lb_icmp_external_v4" {
   ethertype         = "IPv4"
   protocol          = "icmp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.k8_lb.id
+  security_group_id = openstack_networking_secgroup_v2.k8_load_balancer.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "lb_icmp_external_v6" {
@@ -241,7 +241,7 @@ resource "openstack_networking_secgroup_rule_v2" "lb_icmp_external_v6" {
   ethertype         = "IPv6"
   protocol          = "icmp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.k8_lb.id
+  security_group_id = openstack_networking_secgroup_v2.k8_load_balancer.id
 }
 
 #Allow all master inbound traffic from master clients
