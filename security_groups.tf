@@ -240,7 +240,7 @@ resource "openstack_networking_secgroup_rule_v2" "lb_icmp_external_v6" {
   direction         = "ingress"
   ethertype         = "IPv6"
   protocol          = "icmp"
-  remote_ip_prefix  = "0.0.0.0/0"
+  remote_ip_prefix  = "::/0"
   security_group_id = openstack_networking_secgroup_v2.k8_load_balancer.id
 }
 
@@ -314,7 +314,7 @@ resource "openstack_networking_secgroup_rule_v2" "bastion_icmp_external_v6" {
   direction         = "ingress"
   ethertype         = "IPv6"
   protocol          = "icmp"
-  remote_ip_prefix  = "0.0.0.0/0"
+  remote_ip_prefix  = "::/0"
   security_group_id = openstack_networking_secgroup_v2.k8_bastion.id
 }
 
