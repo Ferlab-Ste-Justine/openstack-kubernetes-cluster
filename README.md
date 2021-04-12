@@ -80,7 +80,7 @@ The module outputs the following variables as output:
 
 Here is an example of how the module might be used:
 
-Dns Setup:
+### Dns:
 ```
 resource "openstack_objectstorage_container_v1" "dns" {
   name   = "dns"
@@ -115,6 +115,7 @@ module "dns_servers" {
 }
 ```
 
+### Cluster:
 ```
 resource "openstack_networking_floatingip_v2" "k8_api_lb_floating_ip" {
   pool = module.reference_infra.networks.external.name

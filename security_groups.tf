@@ -1,35 +1,35 @@
 resource "openstack_networking_secgroup_v2" "k8_master" {
-  name                 = "k8-master-${var.namespace}"
+  name                 = var.namespace == "" ? "k8-master" : "k8-master-${var.namespace}"
   description          = "Security group for kubernetes master"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_worker" {
-  name                 = "k8-worker-${var.namespace}"
+  name                 = var.namespace == "" ? "k8-worker" : "k8-worker-${var.namespace}"
   description          = "Security group for kubernetes workers"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_load_balancer" {
-  name                 = "k8-lb-${var.namespace}"
+  name                 = var.namespace == "" ? "k8-lb" : "k8-lb-${var.namespace}"
   description          = "Security group for kubernetes load balancer"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_master_client" {
-  name                 = "k8-master-client-${var.namespace}"
+  name                 = var.namespace == "" ? "k8-master-client" : "k8-master-client-${var.namespace}"
   description          = "Security group for direct client of kubernetes workers"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_worker_client" {
-  name                 = "k8-worker-client-${var.namespace}"
+  name                 = var.namespace == "" ? "k8-worker-client" : "k8-worker-client-${var.namespace}"
   description          = "Security group for direct client of kubernetes masters"
   delete_default_rules = true
 }
 
 resource "openstack_networking_secgroup_v2" "k8_bastion" {
-  name                 = "k8-bastion-${var.namespace}"
+  name                 = var.namespace == "" ? "k8-bastion" : "k8-bastion-${var.namespace}"
   description          = "Security group for cluster's bastion"
   delete_default_rules = true
 }
