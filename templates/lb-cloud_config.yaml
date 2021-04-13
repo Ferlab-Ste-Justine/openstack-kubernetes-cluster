@@ -10,30 +10,7 @@ write_files:
     owner: root:root
     permissions: "0444"
     content: |
-      global
-        #Disable ssl cert validation for availability health checks
-        #Here, Haproxy is used at the transport layer so clients are expected to do cert validation separately
-        ssl-server-verify none
-
-      defaults
-        mode tcp
-        timeout connect 5000ms
-        timeout client 5000ms
-        timeout server 5000ms
-
-      backend k8_api_servers
-        balance roundrobin
-        option tcp-check
-        tcp-check connect ssl
-        default-server inter 1000ms rise 1 fall 1
-        %{ for ip in master_ips ~}
-        server master_${ip} ${ip}:6443 check
-        %{ endfor ~}
-
-      frontend k8_api
-        bind *:6443
-        mode tcp
-        default_backend k8_api_servers
+      ${indent(6, haproxy_config)}
   #Prometheus node exporter systemd configuration
   - path: /etc/systemd/system/node-exporter.service
     owner: root:root
