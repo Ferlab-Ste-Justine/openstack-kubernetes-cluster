@@ -34,7 +34,7 @@ resource "openstack_networking_secgroup_v2" "k8_bastion" {
   delete_default_rules = true
 }
 
-//Allow all outbound traffic for masters, workers and load balancer
+//Allow all outbound traffic for masters, workers, load balancer and bastion
 resource "openstack_networking_secgroup_rule_v2" "k8_master_outgoing_v4" {
   direction         = "egress"
   ethertype         = "IPv4"
@@ -69,6 +69,18 @@ resource "openstack_networking_secgroup_rule_v2" "k8_load_balancer_outgoing_v6" 
   direction         = "egress"
   ethertype         = "IPv6"
   security_group_id = openstack_networking_secgroup_v2.k8_load_balancer.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "k8_bastion_outgoing_v4" {
+  direction         = "egress"
+  ethertype         = "IPv4"
+  security_group_id = openstack_networking_secgroup_v2.k8_bastion.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "k8_bastion_outgoing_v6" {
+  direction         = "egress"
+  ethertype         = "IPv6"
+  security_group_id = openstack_networking_secgroup_v2.k8_bastion.id
 }
 
 //Allow all traffic between masters and workers
