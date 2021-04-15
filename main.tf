@@ -80,7 +80,7 @@ data "template_cloudinit_config" "load_balancer_config" {
 resource "openstack_networking_port_v2" "load_balancer" {
   name           = var.namespace == "" ? "k8-lb" : "k8-lb-${var.namespace}"
   network_id     = var.network_id
-  security_group_ids = concat(var.masters_extra_security_group_ids, [openstack_networking_secgroup_v2.k8_master.id])
+  security_group_ids = [openstack_networking_secgroup_v2.k8_load_balancer.id]
   admin_state_up = true
 }
 
