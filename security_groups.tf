@@ -217,7 +217,7 @@ resource "openstack_networking_secgroup_rule_v2" "lb_api_external" {
   port_range_min    = 6443
   port_range_max    = 6443
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.k8_master.id
+  security_group_id = openstack_networking_secgroup_v2.k8_load_balancer.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "lb_ingress_http_external" {
@@ -227,7 +227,7 @@ resource "openstack_networking_secgroup_rule_v2" "lb_ingress_http_external" {
   port_range_min    = 80
   port_range_max    = 80
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.k8_worker.id
+  security_group_id = openstack_networking_secgroup_v2.k8_load_balancer.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "lb_ingress_https_external" {
@@ -237,7 +237,7 @@ resource "openstack_networking_secgroup_rule_v2" "lb_ingress_https_external" {
   port_range_min    = 443
   port_range_max    = 443
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.k8_worker.id
+  security_group_id = openstack_networking_secgroup_v2.k8_load_balancer.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "lb_icmp_external_v4" {
