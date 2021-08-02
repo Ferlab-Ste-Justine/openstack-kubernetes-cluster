@@ -29,5 +29,6 @@ output "groups" {
     bastion = openstack_networking_secgroup_v2.k8_bastion
     master_client = openstack_networking_secgroup_v2.k8_master_client
     worker_client = openstack_networking_secgroup_v2.k8_master_client
+    worker = openstack_networking_secgroup_v2.k8_worker
   }
 }
