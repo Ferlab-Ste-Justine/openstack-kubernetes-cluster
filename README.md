@@ -74,7 +74,7 @@ The module outputs the following variables as output:
   ip: <ip address of the master>
 }
 ```
-- **groups**: Security groups (ie, resources of type **openstack_networking_secgroup_v2**) that can be used to provide nodes with additional access to the cluster. It has the following 3 groups: **bastion**, **master_client**, **worker_client**.
+- **groups**: Security groups (ie, resources of type **openstack_networking_secgroup_v2**) that can be used to provide nodes with additional access to the cluster. It has the following 4 groups: **bastion**, **master_client**, **worker_client**, **worker**. The **worker** group is already associated with the k8 worker nodes and should not be associated with other nodes, although in exceptional cases, it can be extended with additional rules to give kubernetes workers access to other nodes without creating circular dependecies.
 
 ## Example
 
