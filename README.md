@@ -1,3 +1,14 @@
+# Deprecation notice
+
+This module is getting deprecated in favor of the following modules:
+- https://github.com/Ferlab-Ste-Justine/terraform-openstack-kubernetes-load-balancer
+- https://github.com/Ferlab-Ste-Justine/terraform-openstack-kubernetes-node
+- https://github.com/Ferlab-Ste-Justine/terraform-openstack-kubernetes-security-groups
+
+While less concice, the above modules provide needed flexibility when operating a kubernetes cluster by allowing us to reprovision individual nodes and by decoupling the networking from the vms.
+
+This module will be updated as needed while legacy clusters are still using it, but it will eventually be archived.
+
 # About
 
 This package is a terraform module to provision the machines for a kubernetes cluster on openstack (without the kubernetes installation).
