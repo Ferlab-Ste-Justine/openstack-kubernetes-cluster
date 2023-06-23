@@ -26,6 +26,12 @@ resource "openstack_compute_instance_v2" "masters" {
   network {
     port = openstack_networking_port_v2.masters[count.index].id
   }
+
+  lifecycle {
+    ignore_changes = [
+      user_data,
+    ]
+  }
 }
 
 resource "openstack_networking_port_v2" "workers" {
@@ -46,6 +52,12 @@ resource "openstack_compute_instance_v2" "workers" {
 
   network {
     port = openstack_networking_port_v2.workers[count.index].id
+  }
+
+  lifecycle {
+    ignore_changes = [
+      user_data,
+    ]
   }
 }
 
@@ -93,5 +105,11 @@ resource "openstack_compute_instance_v2" "load_balancer" {
 
   network {
     port = openstack_networking_port_v2.load_balancer.id
+  }
+
+  lifecycle {
+    ignore_changes = [
+      user_data,
+    ]
   }
 }
